@@ -1,2 +1,2 @@
-# Wildfire-Detection-with-Satellite-images
+## Wildfire-Detection-with-Satellite-images
 @nd year students working on project
