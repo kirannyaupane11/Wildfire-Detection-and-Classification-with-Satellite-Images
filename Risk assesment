@@ -1,0 +1,23 @@
+##  Risk Assessment – Wildfire Detection Using AI and Satellite Images
+
+This section outlines potential risks associated with the project and how they are managed to ensure successful and ethical delivery.
+
+| **Risk ID** | **Risk Description**                                                              | **Impact** | **Likelihood** | **Risk Level** | **Mitigation Strategy**                                                                  |
+|-------------|-----------------------------------------------------------------------------------|------------|----------------|----------------|------------------------------------------------------------------------------------------|
+| R1          | Insufficient or imbalanced image data for training                                | High       | Medium         | High           | Use data augmentation, external open-source datasets, and consider transfer learning     |
+| R2          | Iatellite image quality may vary (e.g., clouds, resolution, noise)                | Medium     | Medium         | Medium         | Apply preprocessing techniques to enhance image quality and consistency                  |
+| R3          | Model overfitting due to limited training data                                    | High       | Medium         | High           | Use dropout layers, regularization, and early stopping during training                   |
+| R4          | Ethical concerns regarding surveillance and data privacy                          | High       | Low            | Medium         | Ensure data is sourced ethically and includes no personal or sensitive information       |
+| R5          | Misclassification of wildfire areas (false positives/negatives)                   | High       | Medium         | High           | Evaluate model with precision, recall, F1-score, and consider ensemble approaches        |
+| R6          | Incompatibility with Streamlit or deployment platform                             | Medium     | Low            | Low            | Test application locally before deployment and include required dependencies             |
+| R7          | Colab/Cloud session timeout during model training                                 | Medium     | Medium         | Medium         | Train using fewer epochs, save checkpoints, or shift to GPU-enabled environments         |
+| R8          | Team communication issues affecting project timeline                              | Medium     | Medium         | Medium         | Use Agile (Scrum) framework with regular updates, team meetings, and shared task boards  |
+| R9          | GitHub mismanagement or lost code due to merge conflicts                          | High       | Medium         | High           | Use branches for individual work and review pull requests before merging to main         |
+
+---
+
+## 🛡 Risk Monitoring Plan
+
+-  **Weekly Standups** (Scrum-based) to assess and address risks collaboratively  
+-  **GitHub Issues** for logging and tracking technical or process-related risks  
+-  **Mid-Project Retrospective** to evaluate risk management effectiveness and adapt strategies
