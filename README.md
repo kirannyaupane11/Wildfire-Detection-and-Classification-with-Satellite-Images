@@ -42,3 +42,54 @@ Wildfires spread rapidly and are often detected too late. Traditional detection 
 
 - Satellite Images from NASA Firm and Kaggle Datasets
 - Images are organized in folders:
+
+---
+##  How to Run
+---
+###  Step 1: Mount Google Drive
+
+```python
+from google.colab import drive
+drive.mount('/content/drive')
+
+---
+
+## Step 2: Install dependencies and import libraries
+---
+
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.models import Model, load_model
+from tensorflow.keras.optimizers import Adam
+import matplotlib.pyplot as plt
+import numpy as np
+from tensorflow.keras.preprocessing import image
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+---
+## Step 3: Train and Save the Model
+---
+
+#Use the train.py script or Jupyter notebook provided to train the model and save it
+model.save('/content/drive/MyDrive/wildfire_detection_model_resnet50.h5')
+
+---
+
+## Step 4: Load and Classify
+
+---
+
+model = load_model('/content/drive/MyDrive/wildfire_detection_model_resnet50.h5')
+
+img_path = '/path/to/image.jpg'
+img = image.load_img(img_path, target_size=(224, 224))
+img_array = image.img_to_array(img) / 255.0
+img_array = np.expand_dims(img_array, axis=0)
+
+prediction = model.predict(img_array)
+class_indices = {'no wildfire': 0, 'wildfire': 1}
+labels = dict((v, k) for k, v in class_indices.items())
+print(f"Prediction: {labels[np.argmax(prediction)]}")
