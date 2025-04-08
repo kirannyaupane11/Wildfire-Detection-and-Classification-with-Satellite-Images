@@ -1,0 +1,46 @@
+#  Import necessary libraries
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
+import numpy as np
+import os
+from google.colab import drive
+import matplotlib.pyplot as plt
+
+# Mount Google Drive
+drive.mount('/content/drive')
+
+# Load the trained model
+model_path = '/content/drive/MyDrive/wildfire_detection_model_resnet50.h5'
+model = load_model(model_path)
+
+# Define class labels (must match training)
+class_indices = {'no wildfire': 0, 'wildfire': 1}
+labels = {v: k for k, v in class_indices.items()}
+
+# Path to the test images folder
+test_dir = '/content/drive/MyDrive/wildfire detection satellite images1/archive/testing'
+
+# Function to preprocess and predict a single image
+def classify_image(image_path):
+    try:
+        img = image.load_img(image_path, target_size=(224, 224))
+        img_array = image.img_to_array(img) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+        pred = model.predict(img_array)
+        predicted_class = labels[np.argmax(pred)]
+        confidence = pred[0][np.argmax(pred)] * 100
+        return predicted_class, confidence
+    except Exception as e:
+        print(f"⚠️ Error processing {image_path}: {e}")
+        return None, None
+
+#  Loop through all images and classify
+print("🔥 Wildfire Detection Results:\n")
+for root, dirs, files in os.walk(test_dir):
+    for file in files:
+        if file.lower().endswith(('.jpg', '.jpeg', '.png')):
+            image_path = os.path.join(root, file)
+            result, confidence = classify_image(image_path)
+            if result:
+                status = "🔥 Wildfire detected" if result == 'wildfire' else "❌ No wildfire detected"
+                print(f"{file}: {status} (Confidence: {confidence:.2f}%)")
