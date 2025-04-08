@@ -1,0 +1,87 @@
+#  Mount Google Drive
+from google.colab import drive
+drive.mount('/content/drive')
+
+#  Import required libraries
+import os
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+import matplotlib.pyplot as plt
+
+# NEW: This will allow PIL to load truncated/corrupted images without crashing
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+#  Define paths and parameters
+train_dir = '/content/drive/MyDrive/wildfire detection satellite images1/archive/train'
+img_height, img_width = 224, 224
+batch_size = 32
+num_classes = 2
+epochs = 1
+
+#  Create ImageDataGenerator for training and validation
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    validation_split=0.2,
+    rotation_range=20,
+    zoom_range=0.2,
+    horizontal_flip=True
+)
+
+train_generator = train_datagen.flow_from_directory(
+    train_dir,
+    target_size=(img_height, img_width),
+    batch_size=batch_size,
+    class_mode='categorical',
+    subset='training'
+)
+
+val_generator = train_datagen.flow_from_directory(
+    train_dir,
+    target_size=(img_height, img_width),
+    batch_size=batch_size,
+    class_mode='categorical',
+    subset='validation'
+)
+
+#  Load ResNet50 base model
+base_model = ResNet50(weights='imagenet', include_top=False, input_shape=(img_height, img_width, 3))
+
+# Freeze the base model to use pretrained weights
+base_model.trainable = False
+
+#  Add custom classification head
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(128, activation='relu')(x)
+predictions = Dense(num_classes, activation='softmax')(x)
+
+model = Model(inputs=base_model.input, outputs=predictions)
+
+# : Compile the model
+model.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
+
+#  Train the model
+history = model.fit(
+    train_generator,
+    validation_data=val_generator,
+    epochs=epochs
+)
+
+#  Save the model
+model.save('/content/drive/MyDrive/wildfire_detection_model_resnet50.h5')
+
+#  Plot training results
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Model Accuracy Over Epochs')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.grid(True)
+plt.show()
+
